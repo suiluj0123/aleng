@@ -245,6 +245,9 @@ function setupFormSubmission() {
     form.style.display = 'none';
     document.getElementById('date-summary-details').style.display = 'flex';
     document.getElementById('proposal-success-message').style.display = 'block';
+    
+    const changeNote = document.getElementById('change-note');
+    if (changeNote) changeNote.style.display = 'none';
 
     // Trigger massive confetti explosion!
     triggerMassiveConfetti();
@@ -288,9 +291,11 @@ function stopSuccessCelebration() {
   const form = document.getElementById('date-proposal-form');
   const summaryDetails = document.getElementById('date-summary-details');
   const successMsg = document.getElementById('proposal-success-message');
+  const changeNote = document.getElementById('change-note');
   if (form) form.style.display = 'flex';
   if (summaryDetails) summaryDetails.style.display = 'none';
   if (successMsg) successMsg.style.display = 'none';
+  if (changeNote) changeNote.style.display = 'block';
 
   document.querySelectorAll('.confetti').forEach(el => el.remove());
   document.querySelectorAll('.floating-heart').forEach(el => el.remove());
