@@ -271,14 +271,6 @@
           
           <!-- Interactive Date Form -->
           <form id="date-proposal-form" class="details-content">
-            <!-- 
-              IMPORTANT: Register for a free Web3Forms access key at https://web3forms.com/ 
-              and replace the value below (e.g. value="YOUR_ACCESS_KEY").
-            -->
-            <input type="hidden" name="access_key" value="205b9968-8cd6-409f-896d-1cd7b7a01dce">
-            <input type="hidden" name="subject" value="Aleng has responded to your date proposal! ❤️">
-            <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
-
             <div class="detail-row form-row">
               <label for="select-where" class="detail-label">Where</label>
               <select name="Place" id="select-where" class="form-select" required>
@@ -305,18 +297,32 @@
             </button>
           </form>
 
-          <!-- Proposal Sent Success Message (Initially Hidden) -->
-          <div class="proposal-success-message" id="proposal-success-message" style="display: none;">
+          <!-- Static Date Details (Shown after confirmation) -->
+          <div id="date-summary-details" class="details-content" style="display: none;">
+            <div class="detail-row">
+              <span class="detail-label">Where</span>
+              <span class="detail-val" id="summary-where"></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">When</span>
+              <span class="detail-val" id="summary-when"></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Time</span>
+              <span class="detail-val" id="summary-time"></span>
+            </div>
+          </div>
+
+          <!-- Screenshot Instruction Alert (Shown after confirmation) -->
+          <div class="proposal-success-message" id="proposal-success-message" style="display: none; padding-top: 10px; padding-bottom: 20px;">
             <div class="success-icon-wrapper">
               <svg class="glowing-heart small" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
               </svg>
             </div>
-            <h3 class="success-alert-title">Sent to Him!</h3>
+            <h3 class="success-alert-title">Date Details Locked In!</h3>
             <p class="success-alert-body">
-              I have sent your selections directly to his email.
-              <br>
-              Let's talk properly soon. Take care, Aleng!
+              Perfect! Please take a screenshot of this card and send it to me! ❤️
             </p>
           </div>
 

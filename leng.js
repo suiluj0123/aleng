@@ -208,59 +208,46 @@ function setupFormSubmission() {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const submitBtn = document.getElementById('btn-submit-proposal');
-    const originalText = submitBtn.innerHTML;
-    
-    // Disable button and show sending feedback
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>Sending choice...</span>';
+    const selectWhere = document.getElementById('select-where').value;
+    const inputWhen = document.getElementById('input-when').value;
+    const inputTime = document.getElementById('input-time').value;
 
-    const formData = new FormData(form);
-    const accessKey = formData.get('access_key');
-
-    const handleSuccess = () => {
-      // Hide the selection form
-      form.style.display = 'none';
-      
-      // Show the success notification details
-      const successMsg = document.getElementById('proposal-success-message');
-      if (successMsg) {
-        successMsg.style.display = 'block';
-      }
-      
-      // Trigger massive confetti celebration!
-      triggerMassiveConfetti();
-    };
-
-    // If key is not registered, mock success (for local testing ease)
-    if (accessKey === 'YOUR_WEB3FORMS_ACCESS_KEY_HERE') {
-      setTimeout(() => {
-        handleSuccess();
-      }, 1200);
-      return;
+    // Format Date (YYYY-MM-DD -> e.g. Monday, June 8, 2026)
+    let formattedDate = inputWhen;
+    try {
+      const [year, month, day] = inputWhen.split('-');
+      const dateObj = new Date(Date.UTC(year, month - 1, day));
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      formattedDate = dateObj.toLocaleDateString('en-US', options);
+    } catch (err) {
+      console.error("Date formatting error:", err);
     }
 
-    // Fetch submit via Web3Forms AJAX
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        handleSuccess();
-      } else {
-        alert('Oops! Something went wrong while sending your request. Please try again!');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-      }
-    })
-    .catch(err => {
-      console.error("Submission error: ", err);
-      alert('Network error. Please check your connection and try again!');
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
-    });
+    // Format Time (HH:MM 24h -> 12h AM/PM)
+    let formattedTime = inputTime;
+    try {
+      const [hourStr, minuteStr] = inputTime.split(':');
+      let hour = parseInt(hourStr);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12;
+      hour = hour ? hour : 12;
+      formattedTime = `${hour}:${minuteStr} ${ampm}`;
+    } catch (err) {
+      console.error("Time formatting error:", err);
+    }
+
+    // Populate static details card
+    document.getElementById('summary-where').textContent = selectWhere;
+    document.getElementById('summary-when').textContent = formattedDate;
+    document.getElementById('summary-time').textContent = formattedTime;
+
+    // Toggle forms
+    form.style.display = 'none';
+    document.getElementById('date-summary-details').style.display = 'flex';
+    document.getElementById('proposal-success-message').style.display = 'block';
+
+    // Trigger massive confetti explosion!
+    triggerMassiveConfetti();
   });
 }
 
@@ -299,8 +286,10 @@ function stopSuccessCelebration() {
   
   // Hide success card and show form again in case they step back
   const form = document.getElementById('date-proposal-form');
+  const summaryDetails = document.getElementById('date-summary-details');
   const successMsg = document.getElementById('proposal-success-message');
   if (form) form.style.display = 'flex';
+  if (summaryDetails) summaryDetails.style.display = 'none';
   if (successMsg) successMsg.style.display = 'none';
 
   document.querySelectorAll('.confetti').forEach(el => el.remove());
