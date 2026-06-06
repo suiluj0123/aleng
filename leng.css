@@ -619,23 +619,21 @@ body {
 .details-content {
   padding: 20px 25px;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.detail-row:last-child {
+.detail-row:last-of-type {
   border-bottom: none;
-  padding-bottom: 0;
-}
-
-.detail-row:first-child {
-  padding-top: 0;
 }
 
 .detail-label {
@@ -646,10 +644,103 @@ body {
   font-weight: 500;
 }
 
-.detail-val {
-  color: var(--accent-gold);
+/* Form inputs */
+.form-select, .form-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  width: 65%;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.form-select:focus, .form-input:focus {
+  border-color: var(--accent-rose-gold);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(244, 162, 97, 0.2);
+}
+
+.form-select option {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+.form-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+.submit-proposal-btn {
+  width: 100%;
+  margin-top: 15px;
+  background: linear-gradient(135deg, rgba(244, 162, 97, 0.15), rgba(229, 193, 88, 0.15));
+  border: 1px solid var(--accent-gold);
+  color: var(--text-light);
+  padding: 12px;
+  font-size: 1rem;
   font-weight: 600;
-  padding: 2px 8px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.submit-proposal-btn:hover {
+  background: linear-gradient(135deg, rgba(244, 162, 97, 0.35), rgba(229, 193, 88, 0.35));
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.submit-proposal-btn:active {
+  transform: translateY(1px);
+}
+
+.submit-proposal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success Card message */
+.proposal-success-message {
+  padding: 25px 20px;
+  text-align: center;
+  animation: fadeInSuccess 0.5s ease forwards;
+}
+
+@keyframes fadeInSuccess {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.success-icon-wrapper {
+  margin-bottom: 15px;
+  filter: drop-shadow(0 0 10px rgba(255, 117, 143, 0.4));
+}
+
+.glowing-heart.small {
+  width: 50px;
+  height: 50px;
+  color: #ff758f;
+  animation: heartPulse 1.8s infinite ease-in-out;
+}
+
+.success-alert-title {
+  font-family: var(--font-fancy);
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent-rose) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.success-alert-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
 }
 
 .final-apology-note {

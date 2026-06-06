@@ -3,7 +3,7 @@
    Dynamic Features, Navigation & Animations for Aleng's Page
 */
 
-let successIntervalId = null;
+let heartsIntervalId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   // --- Initialize Systems ---
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
   setupNoButtonEvasion();
   setupImages();
+  setupFormSubmission();
 });
 
 /* --- Star Generator --- */
@@ -54,7 +55,7 @@ function startGreetingTypewriter() {
       index++;
       setTimeout(typeChar, 75); // Speed of typing (ms per character)
     } else {
-      // Finished typing: fade in the button
+      greetingEl.innerHTML = text; // safety check
       if (nextBtnContainer) {
         nextBtnContainer.style.opacity = '1';
         nextBtnContainer.style.transition = 'opacity 1s ease';
@@ -103,12 +104,12 @@ function setupNavigation() {
     }
   });
   
-  // Yes Button click triggers Success Step (Step 5)
+  // Yes Button click triggers Step 5 and starts gentle ambient hearts
   const yesBtn = document.getElementById('btn-yes');
   if (yesBtn) {
     yesBtn.addEventListener('click', () => {
       navigateToStep(4, 5);
-      triggerSuccessCelebration();
+      startGentleHearts();
     });
   }
 }
@@ -199,29 +200,109 @@ function setupImages() {
   });
 }
 
-/* --- Success Celebration (Hearts & Confetti) --- */
-function triggerSuccessCelebration() {
+/* --- Web3Forms Form Submission Logic --- */
+function setupFormSubmission() {
+  const form = document.getElementById('date-proposal-form');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('btn-submit-proposal');
+    const originalText = submitBtn.innerHTML;
+    
+    // Disable button and show sending feedback
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Sending choice...</span>';
+
+    const formData = new FormData(form);
+    const accessKey = formData.get('access_key');
+
+    const handleSuccess = () => {
+      // Hide the selection form
+      form.style.display = 'none';
+      
+      // Show the success notification details
+      const successMsg = document.getElementById('proposal-success-message');
+      if (successMsg) {
+        successMsg.style.display = 'block';
+      }
+      
+      // Trigger massive confetti celebration!
+      triggerMassiveConfetti();
+    };
+
+    // If key is not registered, mock success (for local testing ease)
+    if (accessKey === 'YOUR_WEB3FORMS_ACCESS_KEY_HERE') {
+      setTimeout(() => {
+        handleSuccess();
+      }, 1200);
+      return;
+    }
+
+    // Fetch submit via Web3Forms AJAX
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        handleSuccess();
+      } else {
+        alert('Oops! Something went wrong while sending your request. Please try again!');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    })
+    .catch(err => {
+      console.error("Submission error: ", err);
+      alert('Network error. Please check your connection and try again!');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    });
+  });
+}
+
+/* --- Celebration Systems (Confetti & Floating Hearts) --- */
+
+// Starts ambient background hearts (fires on step 5 load)
+function startGentleHearts() {
   const container = document.getElementById('floating-hearts-container');
   if (!container) return;
   
-  successIntervalId = setInterval(() => {
-    spawnHeart(container, false);
-  }, 1000);
+  if (heartsIntervalId) clearInterval(heartsIntervalId);
   
-  for (let i = 0; i < 45; i++) {
+  heartsIntervalId = setInterval(() => {
+    spawnHeart(container, false);
+  }, 1200);
+}
+
+// Triggers the climax explosion of confetti and heart bursts (fires on submit success)
+function triggerMassiveConfetti() {
+  const container = document.getElementById('floating-hearts-container');
+  if (!container) return;
+  
+  for (let i = 0; i < 50; i++) {
     setTimeout(() => {
       spawnConfetti();
       if (i % 2 === 0) spawnHeart(container, true);
-    }, i * 60);
+    }, i * 65);
   }
 }
 
 function stopSuccessCelebration() {
-  if (successIntervalId) {
-    clearInterval(successIntervalId);
-    successIntervalId = null;
+  if (heartsIntervalId) {
+    clearInterval(heartsIntervalId);
+    heartsIntervalId = null;
   }
   
+  // Hide success card and show form again in case they step back
+  const form = document.getElementById('date-proposal-form');
+  const successMsg = document.getElementById('proposal-success-message');
+  if (form) form.style.display = 'flex';
+  if (successMsg) successMsg.style.display = 'none';
+
   document.querySelectorAll('.confetti').forEach(el => el.remove());
   document.querySelectorAll('.floating-heart').forEach(el => el.remove());
 }
@@ -234,7 +315,7 @@ function spawnHeart(container, isBurst) {
   
   const size = isBurst ? Math.random() * 20 + 15 : Math.random() * 15 + 10;
   const left = Math.random() * 100;
-  const speed = isBurst ? Math.random() * 4 + 3 : Math.random() * 6 + 5;
+  const speed = isBurst ? Math.random() * 3.5 + 2.5 : Math.random() * 6 + 5;
   const drift = (Math.random() - 0.5) * 120;
   
   heart.style.width = `${size}px`;
@@ -255,7 +336,6 @@ function spawnHeart(container, isBurst) {
 }
 
 /* Helper to spawn confetti particles falling down */
-function confetti() {}
 function spawnConfetti() {
   const confetti = document.createElement('div');
   confetti.classList.add('confetti');
